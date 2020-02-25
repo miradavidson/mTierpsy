@@ -1,4 +1,4 @@
-# Mouse feature extraction
+# Mouse Tracker
 
 Analysis of mouse trajectory data using pose estimation and feature extraction. This document describes how to run the pipeline from beginning to end using DeepLabCut and modules for feature computation.
 
