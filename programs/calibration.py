@@ -89,19 +89,3 @@ def calibrate(metadata, box_size, output):
 
 	experiments = pd.DataFrame(experiments)
 	experiments.to_csv(output)
-
-
-if __name__ == '__main__':
-	
-	# Command-line interface
-	parser = argparse.ArgumentParser(description='Calculates calibration per experiment.')
-	parser.add_argument('metadata', type=str, action='store',
-						help='Path to metadata file.')
-	parser.add_argument('box_size', type=int, action='store',
-						help='Size of box in mm.')
-	parser.add_argument('-o', '--output', type=str, default=sys.stdout,
-						help='Path to output file.')
-	args = parser.parse_args()
-
-	# Run calibration
-	calibration(args.metadata, args.box_size, args.output)
