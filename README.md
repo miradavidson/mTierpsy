@@ -1,4 +1,4 @@
-# Mouse feature extraction
+# Mouse Tracker
 
 Analysis of mouse trajectory data using pose estimation and feature extraction. This document describes how to run the pipeline from beginning to end using DeepLabCut and modules for feature computation.
 
@@ -13,13 +13,13 @@ Because of conflicting dependencies, installation is not always straight-forward
 You can convert all videos to mp4 by running
 
 ```sh
-find . -type f -name "*.mpg" -exec sh -c 'ffmpeg -i "$1" "${1%}.mp4"' sh {} \;```
+find . -type f -name "*.mpg" -exec sh -c 'ffmpeg -i "$1" "${1%}.mp4"' sh {} \;
 ```
 
 And cropping with
 
 ```sh
-find . -type f -name "*.mpg" -exec sh -c 'ffmpeg -i "$1" -vf "crop=w:h:x:y" "${1%.*}_box.mp4"' sh {} \;
+find . -type f -name "*.mpg" -exec sh -c 'ffmpeg -i "$1" -vf "crop=w:h:x:y" "${1%.*}_quadrant.mp4"' sh {} \;
 ```
 
 For example:
@@ -37,9 +37,9 @@ Check the resulting videos and tune the cropping parameters accordingly, as diff
 ### Metadata
 It is very important to have a complete metadata file. Each metadata file should contain the following columns:
 - `file_id` File identifier. This is used to link metadata to features and should be unique for each video.
-- `experiment` Name of the experiment. It is used for calibration across all entries within the same experiment.
+- `experiment` Name of the experiment. It is used for calibration across all entries within the same experiment. If each experiment was taken with a different set-up, it can be set equal to `original_video_path`.
 - `video_path` Path to the mouse-specific video.
-- `original_video_path` (optional) This is only necessary if you are going to use the stabilisation module.
+- `original_video_path` (optional) This is only necessary if you are going to use the stabilisation module. IMPORTANT: It should be in .mp4 format or the stabilisation will fail.
 - `box_labels_path` Path to the labelled boxes. This will automatically be added when running the analysis.
 - `labels_path` Path to the output of DeepLabCut. This will automatically be added when running the analysis.
 

@@ -21,8 +21,8 @@ class Analysis:
 
 	def __init__(self, metadata, features):
 
-		self.metadata = pd.read_csv(metadata)
-		self.features = pd.read_csv(features)
+		self.metadata = metadata
+		self.features = features
 		self.combined_data = pd.merge(self.metadata, self.features, on='file_id')
 		self.features = self.features.drop('file_id', axis=1)  # don't want to pick up as a feature
 

@@ -17,11 +17,11 @@ from mousetracker.programs.feature_extraction import feature_extraction
 class MouseTracker():
 
 	def __init__(self, path):
-		self.path = path
-		self.metadata = os.path.join(path, 'metadata.csv')
-		self.box = os.path.join(path, 'box')
-		self.calibration = os.path.join(path, 'calibration.csv')
-		self.features = os.path.join(path, 'features.csv')
+		self.path = os.path.join(os.getcwd(), path)
+		self.metadata = os.path.join(self.path, 'metadata.csv')
+		self.box = os.path.join(self.path, 'box')
+		self.calibration = os.path.join(self.path, 'calibration.csv')
+		self.features = os.path.join(self.path, 'features.csv')
 
 
 	def create_new_project(self, metadata):
@@ -38,6 +38,7 @@ class MouseTracker():
 
 		if not os.path.exists(self.path):
 			os.makedirs(self.box)
+			os.makedirs(os.path.join(self.path, 'videos'))
 			copyfile(metadata, self.metadata)
 			print('Project created in: %s' % os.path.join(os.getcwd(), self.path))
 		else:
@@ -72,12 +73,12 @@ class MouseTracker():
 		feature_extraction(self.metadata, calibration, output, **kwargs)
 
 
-	def stabilise_videos(self, mask=None):
+	def stabilise_videos(self, mask=None, **kwargs):
 		""" Run the interactive video stabilisation module
 		mask (Numpy array): Cover the first frame with a mask
 		to prevent tracking of moving objects
 		"""
-		stabilise_videos(self.metadata, mask=mask)
+		stabilise_videos(self.metadata, mask=mask, **kwargs)
 
 
 	def transform_labels(self):

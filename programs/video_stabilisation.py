@@ -47,7 +47,7 @@ def read_video(video):
     return cap, n_frames, prev_gray
 
 
-def find_points(cap, n_frames, prev_gray, mask=None, maxCorners=200, qualityLevel=0.1, minDistance=20):
+def find_points(cap, n_frames, prev_gray, mask=None, maxCorners=200, qualityLevel=0.1, minDistance=20, show=False):
     
     # Detect feature points in previous frame
     prev_pts = cv2.goodFeaturesToTrack(prev_gray,
@@ -62,7 +62,7 @@ def find_points(cap, n_frames, prev_gray, mask=None, maxCorners=200, qualityLeve
         x,y = i.ravel()
         circ = cv2.circle(demo,(x,y),10,0,-1)
 
-    plt.imshow(demo),plt.show()
+    if show: plt.imshow(demo),plt.show()
     
     return prev_pts
 
@@ -193,7 +193,7 @@ def stabilise_videos(metadata, mask=None, checkpoints=True):
         try:
 
             cap, n_frames, prev_gray = read_video(video)
-            prev_pts = find_points(cap, n_frames, prev_gray, mask=mask)
+            prev_pts = find_points(cap, n_frames, prev_gray, mask=mask, show=checkpoints)
             transforms = calc_transform(cap, n_frames, prev_gray, prev_pts)
             transforms = smoothen_transforms(transforms)
 
@@ -308,6 +308,7 @@ def transform_labels(metadata_path):
         transforms_df = pd.read_csv(transforms_path)[['dx', 'dy','da']]
 
         # stabilise labels
+        assert len(labels) == len(transforms_df)  # sanity check
         transformed_labels = stabilise(labels, transforms_df)
         transformed_box_labels = stabilise(box_labels, transforms_df)
 

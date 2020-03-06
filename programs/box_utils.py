@@ -17,15 +17,16 @@ def extract_images(metadata, output_dir):
 	if not os.path.exists(output_dir):
 		os.mkdir(output_dir)
 
-	for index, exp in metadata.iterrows():
-		
+	for i, exp in metadata.iterrows():
+
 		# find video
+		file_id = exp['file_id']
 		video = exp['video_path']
 
 		# use openCV functions to read
 		cap = cv2.VideoCapture(video)
 		ret, frame = cap.read() 
-		cv2.imwrite(os.path.join(output_dir,'%s.jpg') % index, frame)
+		cv2.imwrite(os.path.join(output_dir,'%s.png') % file_id, frame)
 		cap.release()
 
 
@@ -65,19 +66,14 @@ def order_corners(file):
 def add_box_to_metadata(metadata_path, input_dir):
 	""" Order corners and add to metadata """
 
-	# read in metadata
-	metadata = pd.read_csv(metadata_path)
-
-	# order corners
-	corners = []
-	for i in range(len(metadata)):
-		path = os.path.join(input_dir, '%s.csv' % i)
-		order_corners(path)
-		corners.append(os.path.join(os.getcwd(), path))
-
 	# add to metadata
-	metadata['box_labels_path'] = corners
+	metadata = pd.read_csv(metadata_path)
+	metadata['box_labels_path'] = metadata['file_id'].apply(lambda x: os.path.join(input_dir, '%s.csv' % x))
 	metadata.to_csv(metadata_path, index=False)
+	
+	# order box
+	for box in metadata['box_labels_path']:
+		order_corners(box)
 
 
 def box_to_df(box_labels, labels):
