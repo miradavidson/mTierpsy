@@ -1,25 +1,25 @@
-# Mouse Tracker
+# mTierpsy
 
-Analysis of mouse trajectory data using pose estimation and feature extraction. This document describes how to run the pipeline from beginning to end using DeepLabCut and modules for feature computation.
+Multidimensional behavioural phenotyping from pose estimation data in mice.
 
 ## Installation
 
-Because of conflicting dependencies, installation is not always straight-forward. Python version should be 3.6, and packages should be installed according to versions defined in the requirements. If you are not using a GPU, install `tensorflow==1.12` instead of `tensorflow-gpu`. If you encounter any other problems, check the [DeepLabCut documentation](https://github.com/AlexEMG/DeepLabCut/blob/master/docs/installation.md "DeepLabCut Installation").
+Because of dependencies within DeepLabCut/TensorFlow, installation is not always straight-forward. Python version should be 3.6, and you should install package versions according to the requirements. If you are not using a GPU, install `tensorflow==1.12` instead of `tensorflow-gpu`. If you encounter any other problems, check the [DeepLabCut documentation](https://github.com/AlexEMG/DeepLabCut/blob/master/docs/installation.md "DeepLabCut Installation").
 
 ## Preparing videos
 
 ### Convert and crop videos
 
-You can convert all videos to mp4 by running
+Videos should be in .mp4 format and have only one mouse in frame. You can use ffmpeg to convert videos:
 
 ```sh
 find . -type f -name "*.mpg" -exec sh -c 'ffmpeg -i "$1" "${1%}.mp4"' sh {} \;
 ```
 
-And cropping with
+For an open field box with a 4x4 divider, you can crop by running:
 
 ```sh
-find . -type f -name "*.mpg" -exec sh -c 'ffmpeg -i "$1" -vf "crop=w:h:x:y" "${1%.*}_quadrant.mp4"' sh {} \;
+find . -type f -name "*.mpg" -exec sh -c 'ffmpeg -i "$1" -vf "crop=w:h:x:y" "${1%.*}_[quadrant].mp4"' sh {} \;
 ```
 
 For example:
@@ -35,7 +35,7 @@ find . -type f -name "*.mpg" \
 Check the resulting videos and tune the cropping parameters accordingly, as different videos may have differently positioned boxes. Set the `video_path` in the metadata accordingly.
 
 ### Metadata
-It is very important to have a complete metadata file. Each metadata file should contain the following columns:
+Each metadata file should contain the following columns:
 - `file_id` File identifier. This is used to link metadata to features and should be unique for each video.
 - `experiment` Name of the experiment. It is used for calibration across all entries within the same experiment. If each experiment was taken with a different set-up, it can be set equal to `original_video_path`.
 - `video_path` Path to the mouse-specific video.
@@ -44,12 +44,12 @@ It is very important to have a complete metadata file. Each metadata file should
 - `labels_path` Path to the output of DeepLabCut. This will automatically be added when running the analysis.
 
 
-### Creating a new project
+## Creating a new project
 To create a new project, run 
 
 ```py
-from mousetracker import MouseTracker
-project = MouseTracker(path/to/project)
+from mTierpsy import mTierpsy
+project = mTierpsy(path/to/project)
 project.create_new_project(path/to/metadata)
 ```
 
@@ -57,7 +57,7 @@ A new directory with your project name will be created with a `box` and `videos`
 
 If you want to resume your analysis at any point, simply run
 
-`project = MouseTracker(path/to/project)`
+`project = mTierpsy(path/to/project)`
 
 
 ## Add box labels
@@ -84,11 +84,21 @@ Alternatively, you can make your own CSV file formatted as:
 | pxmm | ...        |
 
 ## Pose estimation using DeepLabCut
-To extract posture from the videos, you will have to specify the config file of the DeepLabCut model. On `behavgenom$`, the model lives in `mousetracker_dlcmodel`.
+To extract posture from the videos, you will have to specify the config file of the DeepLabCut model.
 
 `project.label_videos(config)`
 
 You can specify the GPU with the `gputout` parameter.
+
+## Feature extraction
+You can run the feature extraction with:
+
+`project.extract_features()`
+
+Options are:
+- `calibration` Specify the calibration file. The default is `calibration.csv`, which is the output of the calibrate function.
+- `output` Specify the output file. The default is `features.csv`.
+- `start`, `end` Specifiy the start and end frame, respectively.
 
 ## Video stabilisation (optional)
 If you wish to stabilise your videos, you can run the video stabilisation module. This is an interactive process - that means that you will have to check with each video whether the stabilisation has been successful. We don't want to introduce fake motion! It is expected that some video have drifting frames - however, if you spot a very big peak, there may have been a tracking error and you will want to correct for this (e.g. by changing your mask).
@@ -97,10 +107,10 @@ You can load the module by running
 
 `project.stabilise_videos(mask)`
 
-As you see, you will have to define a mask in order to not track the mice or edges. A mask should be a numpy array with the same shape as a frame. You can use the `make_mask` function in the video stabilisation module to generate this. You can then view your mask using the same function by passing the `mask` parameter. An example case:
+As you can see, you will have to define a mask in order to prevent tracking of the mice or edges. A mask should be a numpy array with the same shape as a frame. You can use the `make_mask` function in the video stabilisation module to generate this. You can then view your mask using the same function by passing the `mask` parameter. An example case:
 
 ```py
-from mousetracker import make_mask
+from mTierpsy import make_mask
 video = ... # extract example video from your metadata
 frame, mask = make_mask(video)
 mask[20:-20,20:-20] = 255  # don't include edges of video
@@ -115,18 +125,3 @@ For each video, you will be shown a) the points selected for stabilisation and b
 You can then transform the associated labels (and update the metadata) by running
 
 ```project.transform_labels()```
-
-
-## Feature extraction
-You can run the feature extraction with:
-
-`project.extract_features()`
-
-Options are:
-- `calibration` Specify the calibration file. The default is `calibration.csv`, which is the output of the calibrate function.
-- `output` Specify the output file. The default is `features.csv`.
-- `start`, `end` Specifiy the start and end frame, respectively.
-
-## Analysis
-
-The `Analysis` class contains some standard stats functions for the analysis of features. Running `mousetracker.Analysis(metadata, features)` will return an object that comes with in-built functions. It's up to you what you want to explore!
