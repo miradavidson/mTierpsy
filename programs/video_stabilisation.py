@@ -7,9 +7,9 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import matplotlib.pyplot as plt
-from mousetracker.programs.box_utils import box_to_df
-from mousetracker.programs.data_extraction import extract_data
-from mousetracker.programs.smoothing import moving_average
+from mTierpsy.programs.box_utils import box_to_df
+from mTierpsy.programs.data_extraction import extract_data
+from mTierpsy.programs.smoothing import moving_average
 
 
 def make_mask(video, mask=None, show=True):

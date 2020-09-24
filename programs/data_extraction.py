@@ -4,7 +4,7 @@
 
 import pandas as pd
 from tqdm import tqdm
-from mousetracker.programs.box_utils import box_to_df
+from mTierpsy.programs.box_utils import box_to_df
 
 def extract_data(metadata, start=0, end=None):
     """ Read in datasets """

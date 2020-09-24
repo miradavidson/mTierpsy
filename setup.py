@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="mousetracker",
+    name="mTierpsy",
     version="0.0.1",
     author="Mira Davidson",
     author_email="msd115@ic.ac.uk",

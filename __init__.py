@@ -4,6 +4,5 @@
 Pose estimation and feature extraction for analysis of mouse behaviour
 """
 
-from mousetracker.programs.MouseTracker import MouseTracker
-from mousetracker.programs.video_stabilisation import make_mask
-from mousetracker.programs.analysis import Analysis
+from mTierpsy.programs.mTierpsy import mTierpsy
+from mTierpsy.programs.video_stabilisation import make_mask

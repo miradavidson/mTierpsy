@@ -5,9 +5,9 @@
 import pandas as pd
 from tqdm import tqdm
 
-from mousetracker.programs.data_extraction import extract_data
-from mousetracker.programs.calibration import calculate_calibration
-from mousetracker.programs.feature_computation import Mouse
+from mTierpsy.programs.data_extraction import extract_data
+from mTierpsy.programs.calibration import calculate_calibration
+from mTierpsy.programs.feature_computation import Mouse
 
 
 def feature_extraction(metadata, calibration, output, start=0, end=None):

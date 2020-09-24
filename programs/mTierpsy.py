@@ -7,14 +7,14 @@ Pose estimation and feature extraction for analysis of mouse behaviour
 import os
 from shutil import copyfile
 
-from mousetracker.programs.box_utils import extract_images, add_box_to_metadata
-from mousetracker.programs.label_videos import label_videos
-from mousetracker.programs.calibration import calibrate
-from mousetracker.programs.video_stabilisation import stabilise_videos, transform_labels
-from mousetracker.programs.feature_extraction import feature_extraction
+from mTierpsy.programs.box_utils import extract_images, add_box_to_metadata
+from mTierpsy.programs.label_videos import label_videos
+from mTierpsy.programs.calibration import calibrate
+from mTierpsy.programs.video_stabilisation import stabilise_videos, transform_labels
+from mTierpsy.programs.feature_extraction import feature_extraction
 
 
-class MouseTracker():
+class mTierpsy():
 
 	def __init__(self, path):
 		self.path = os.path.join(os.getcwd(), path)

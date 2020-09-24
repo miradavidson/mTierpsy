@@ -5,7 +5,7 @@
 import pandas as pd 
 import numpy as np
 
-from mousetracker.programs.smoothing import smooth, moving_average
+from mTierpsy.programs.smoothing import smooth, moving_average
 
 
 class Mouse:
